@@ -1,1 +1,1 @@
-include ':aidl_app', ':binding_app'
+include ':aidl_app', ':binding_app', ':remotecontrol'

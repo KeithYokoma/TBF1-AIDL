@@ -7,4 +7,5 @@ import com.github.keithyokoma.tbf1_aidl.SampleParcelable;
 interface SampleAidlService {
     String getSomething();
     SampleParcelable getParcelable();
+    void doSomething(in SampleParcelable item);
 }

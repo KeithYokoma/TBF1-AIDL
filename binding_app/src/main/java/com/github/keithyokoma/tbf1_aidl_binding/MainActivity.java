@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.keithyokoma.tbf1_aidl.SampleAidlService;
+import com.github.keithyokoma.tbf1_aidl.SampleParcelable;
 
 public class MainActivity extends AppCompatActivity {
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 					return;
 				try {
 					Toast.makeText(getApplicationContext(), sampleService.getSomething(), Toast.LENGTH_LONG).show();
+					sampleService.doSomething(new SampleParcelable("Hello World"));
 				} catch (RemoteException e) {
 					Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 				}

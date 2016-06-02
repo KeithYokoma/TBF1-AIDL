@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 /**
  * @author KeishinYokomaku
@@ -19,6 +20,11 @@ public class ConcreteSampleAidlService extends Service {
 		@Override
 		public SampleParcelable getParcelable() throws RemoteException {
 			return new SampleParcelable("Hello AIDL World!");
+		}
+
+		@Override
+		public void doSomething(SampleParcelable item) throws RemoteException {
+			Toast.makeText(getApplicationContext(), String.valueOf(item), Toast.LENGTH_SHORT).show();
 		}
 	};
 
