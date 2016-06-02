@@ -61,18 +61,21 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				sendMediaButtonEvent(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+				updatePlaybackControl();
 			}
 		});
 		next.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sendMediaButtonEvent(KeyEvent.KEYCODE_MEDIA_NEXT);
+				updatePlaybackControl();
 			}
 		});
 		playPause.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				sendMediaButtonEvent(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
+				updatePlaybackControl();
 			}
 		});
 
@@ -159,14 +162,16 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void sendMediaButtonEvent(int keyCode) {
-		if (clientIntent == null)
+		if (clientIntent == null) {
+			Log.v(TAG, "no client registered");
 			return;
+		}
 
 		KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
 		Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
 		intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
 		try {
-			clientIntent.send(getApplication(), 0, intent);
+			clientIntent.send(this, 0, intent);
 		} catch (PendingIntent.CanceledException e) {
 			Log.e(TAG, "Error sending intent for media button down: " + e);
 			e.printStackTrace();
@@ -176,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 		intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
 		intent.putExtra(Intent.EXTRA_KEY_EVENT, keyEvent);
 		try {
-			clientIntent.send(getApplication(), 0, intent);
+			clientIntent.send(this, 0, intent);
 		} catch (PendingIntent.CanceledException e) {
 			Log.e(TAG, "Error sending intent for media button up: " + e);
 			e.printStackTrace();
@@ -210,11 +215,13 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		@Override
+		@Keep
 		public void setCurrentClientId(int clientGeneration, PendingIntent clientMediaIntent, boolean clearing) throws RemoteException {
 			handler.obtainMessage(MSG_SET_GENERATION_ID, clientGeneration, (clearing ? 1 : 0), clientMediaIntent).sendToTarget();
 		}
 
 		@Override
+		@Keep
 		public void setEnabled(boolean enabled) throws RemoteException {
 
 		}
@@ -225,32 +232,37 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		@Override
+		@Keep
 		public void setPlaybackState(int generationId, int state, long stateChangeTimeMs, long currentPosMs, float speed) throws RemoteException {
 			handler.obtainMessage(MSG_UPDATE_STATE, generationId, state).sendToTarget();
 		}
 
 		@Override
+		@Keep
 		public void setTransportControlFlags(int generationId, int transportControlFlags) throws RemoteException {
 			handler.obtainMessage(MSG_SET_TRANSPORT_CONTROLS, generationId, transportControlFlags).sendToTarget();
 		}
 
 		@Override
+		@Keep
 		public void setTransportControlInfo(int generationId, int transportControlFlags, int posCapabilities) throws RemoteException {
 			handler.obtainMessage(MSG_SET_TRANSPORT_CONTROLS, generationId, transportControlFlags).sendToTarget();
 		}
 
 		@Override
+		@Keep
 		public void setMetadata(int generationId, Bundle metadata) throws RemoteException {
 			handler.obtainMessage(MSG_SET_METADATA, generationId, 0, metadata).sendToTarget();
 		}
 
 		@Override
+		@Keep
 		public void setArtwork(int generationId, Bitmap artwork) throws RemoteException {
 			handler.obtainMessage(MSG_SET_ARTWORK, generationId, 0, artwork).sendToTarget();
-
 		}
 
 		@Override
+		@Keep
 		public void setAllMetadata(int generationId, Bundle metadata, Bitmap artwork) throws RemoteException {
 			handler.obtainMessage(MSG_SET_METADATA, generationId, 0, metadata).sendToTarget();
 			handler.obtainMessage(MSG_SET_ARTWORK, generationId, 0, artwork).sendToTarget();
